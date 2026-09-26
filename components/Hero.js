@@ -9,9 +9,9 @@ export default function Hero() {
           WORKOUT LIBRARY
         </span>
         <h1 className="font-display text-4xl font-bold uppercase leading-[1.05] text-white sm:text-5xl lg:text-6xl">
-          Train with intent.
+          Train with intent. log
           <br />
-          Log every set.
+          every set.
         </h1>
         <p className="max-w-md text-sm leading-relaxed text-muted sm:text-base">
           FitLog is a dark, no-nonsense gym companion: pick a lift, lock it

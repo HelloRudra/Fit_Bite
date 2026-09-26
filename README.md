@@ -1,20 +1,20 @@
-# FitLog — Workout Library
+FitLog — Workout Library
 
 A dark, no-nonsense gym companion built with Next.js. Browse a library of
 twelve lifts, drill into a detailed workout page, and lock exercises into
 today's plan or save them for later — all tracked live in the navbar and
 persisted across reloads.
 
-## Description
+Description
 
 FitLog lets a lifter pick a lift, lock it into today's plan, and watch the
 week's work add up. The Home page showcases the full workout library in a
 responsive card grid; each card links to a detail page with full instructions
-and specs. From there, workouts can be added to **Today's Plan** (capped at 5
+and specs. From there, workouts can be added to Today's Plan (capped at 5
 lifts) or **Saved for later**, both tracked on a dedicated `/my-plan` page
 with live stat totals, tabs, and per-item actions.
 
-## Technologies Used
+Technologies Used
 
 - **Next.js 14** (App Router) — routing, layouts, API route, static params
 - **React 18** — component state and context
@@ -22,7 +22,7 @@ with live stat totals, tabs, and per-item actions.
 - **Browser localStorage** — persists the plan and saved lists across reloads
 - **Custom inline SVG icon set** — no external icon dependency
 
-## Features
+Features
 
 1. **Responsive workout library** — a 4-column (desktop) / 2-column (tablet)
    / 1-column (mobile) grid of all 12 workouts, each with image, category
@@ -39,16 +39,6 @@ with live stat totals, tabs, and per-item actions.
    navbar update live and persist in `localStorage`, so progress survives a
    page reload. A custom 404 page handles unknown routes.
 
-## Getting Started
-
-```bash
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view the app.
-
-## Project Structure
 
 ```
 app/

@@ -1,0 +1,230 @@
+[
+  {
+    "id": "barbell-bench-press",
+    "name": "BARBELL BENCH PRESS",
+    "tags": ["CHEST", "ARMS"],
+    "equipment": "Barbell, Bench",
+    "difficulty": "Intermediate",
+    "sets": 4,
+    "reps": "6-8",
+    "duration": 25,
+    "calories": 180,
+    "rating": 4.8,
+    "description": "A compound press that builds chest thickness, triceps, and pressing power from a stable bench.",
+    "instructions": [
+      "Lie flat on the bench with feet planted firmly on the floor.",
+      "Grip the bar slightly wider than shoulder-width and unrack it over your chest.",
+      "Lower the bar under control until it lightly touches your mid-chest.",
+      "Drive the bar back up to full lock-out, keeping your shoulder blades pinned."
+    ]
+  },
+  {
+    "id": "incline-dumbbell-press",
+    "name": "INCLINE DUMBBELL PRESS",
+    "tags": ["CHEST", "SHOULDERS"],
+    "equipment": "Dumbbells, Bench",
+    "difficulty": "Intermediate",
+    "sets": 4,
+    "reps": "8-10",
+    "duration": 22,
+    "calories": 160,
+    "rating": 4.6,
+    "description": "Targets the upper chest and front delts by pressing from an inclined bench angle.",
+    "instructions": [
+      "Set the bench to a 30-45 degree incline and sit with a dumbbell in each hand.",
+      "Press the dumbbells up until your arms are fully extended above your chest.",
+      "Lower them slowly until your upper arms are just below parallel.",
+      "Press back up, squeezing your chest at the top of the movement."
+    ]
+  },
+  {
+    "id": "deadlift",
+    "name": "CONVENTIONAL DEADLIFT",
+    "tags": ["BACK", "LEGS"],
+    "equipment": "Barbell",
+    "difficulty": "Advanced",
+    "sets": 5,
+    "reps": "3-5",
+    "duration": 30,
+    "calories": 220,
+    "rating": 4.9,
+    "description": "A full-body pull that builds raw strength through the posterior chain, back, and grip.",
+    "instructions": [
+      "Stand with the bar over mid-foot and grip it just outside your knees.",
+      "Set your back flat, chest up, and hips down before initiating the pull.",
+      "Drive through the floor, keeping the bar close to your shins and thighs.",
+      "Lock out tall at the top, then lower the bar back down with control."
+    ]
+  },
+  {
+    "id": "lat-pulldown",
+    "name": "LAT PULLDOWN",
+    "tags": ["BACK", "ARMS"],
+    "equipment": "Cable Machine",
+    "difficulty": "Beginner",
+    "sets": 4,
+    "reps": "10-12",
+    "duration": 20,
+    "calories": 140,
+    "rating": 4.5,
+    "description": "Builds a wider back and stronger pulling strength using a controlled cable movement.",
+    "instructions": [
+      "Sit at the machine and grip the bar wider than shoulder-width.",
+      "Brace your core and pull the bar down to your upper chest.",
+      "Squeeze your shoulder blades together at the bottom of the pull.",
+      "Slowly return the bar up until your arms are fully extended."
+    ]
+  },
+  {
+    "id": "barbell-back-squat",
+    "name": "BARBELL BACK SQUAT",
+    "tags": ["LEGS"],
+    "equipment": "Barbell, Squat Rack",
+    "difficulty": "Advanced",
+    "sets": 5,
+    "reps": "5-8",
+    "duration": 28,
+    "calories": 210,
+    "rating": 4.9,
+    "description": "The king of lower-body lifts, building quads, glutes, and total-body bracing strength.",
+    "instructions": [
+      "Set the bar across your upper back and step out of the rack.",
+      "Brace your core and sit back and down until hips drop below your knees.",
+      "Keep your chest up and knees tracking over your toes throughout.",
+      "Drive through your heels to stand back up to full extension."
+    ]
+  },
+  {
+    "id": "walking-lunge",
+    "name": "WALKING LUNGE",
+    "tags": ["LEGS"],
+    "equipment": "Dumbbells",
+    "difficulty": "Beginner",
+    "sets": 3,
+    "reps": "12 steps",
+    "duration": 18,
+    "calories": 150,
+    "rating": 4.4,
+    "description": "A unilateral leg builder that improves balance, quad and glute strength with every step.",
+    "instructions": [
+      "Hold a dumbbell in each hand and stand tall with feet together.",
+      "Step forward into a lunge, lowering your back knee toward the floor.",
+      "Push off your front foot to bring your back leg through into the next step.",
+      "Continue alternating legs for the full distance or rep count."
+    ]
+  },
+  {
+    "id": "standing-barbell-curl",
+    "name": "STANDING BARBELL CURL",
+    "tags": ["ARMS"],
+    "equipment": "Barbell",
+    "difficulty": "Beginner",
+    "sets": 3,
+    "reps": "10-12",
+    "duration": 15,
+    "calories": 110,
+    "rating": 4.3,
+    "description": "A classic bicep builder that isolates the arms with strict, controlled curls.",
+    "instructions": [
+      "Stand tall holding the bar with an underhand, shoulder-width grip.",
+      "Keeping your elbows pinned to your sides, curl the bar up toward your chest.",
+      "Squeeze your biceps hard at the top of the movement.",
+      "Lower the bar back down slowly under full control."
+    ]
+  },
+  {
+    "id": "triceps-rope-pushdown",
+    "name": "TRICEPS ROPE PUSHDOWN",
+    "tags": ["ARMS"],
+    "equipment": "Cable Machine",
+    "difficulty": "Beginner",
+    "sets": 3,
+    "reps": "12-15",
+    "duration": 14,
+    "calories": 100,
+    "rating": 4.2,
+    "description": "Isolates the triceps with constant cable tension for a strong lockout and definition.",
+    "instructions": [
+      "Attach a rope to the high pulley and grip both ends with elbows tucked in.",
+      "Push the rope down until your arms are fully extended, splitting the rope at the bottom.",
+      "Squeeze your triceps hard at full extension.",
+      "Slowly let the rope rise back up without flaring your elbows."
+    ]
+  },
+  {
+    "id": "overhead-shoulder-press",
+    "name": "OVERHEAD SHOULDER PRESS",
+    "tags": ["SHOULDERS"],
+    "equipment": "Dumbbells",
+    "difficulty": "Intermediate",
+    "sets": 4,
+    "reps": "8-10",
+    "duration": 20,
+    "calories": 155,
+    "rating": 4.6,
+    "description": "Builds strong, capped shoulders and pressing stability from a standing or seated position.",
+    "instructions": [
+      "Hold a dumbbell in each hand at shoulder height, palms facing forward.",
+      "Brace your core and press the dumbbells straight overhead.",
+      "Lock out fully without flaring your ribs or arching your back.",
+      "Lower the dumbbells back to shoulder height with control."
+    ]
+  },
+  {
+    "id": "lateral-raise",
+    "name": "LATERAL RAISE",
+    "tags": ["SHOULDERS"],
+    "equipment": "Dumbbells",
+    "difficulty": "Beginner",
+    "sets": 3,
+    "reps": "12-15",
+    "duration": 12,
+    "calories": 90,
+    "rating": 4.1,
+    "description": "Isolates the side delts to build width and a rounder, more capped shoulder shape.",
+    "instructions": [
+      "Stand tall holding a light dumbbell in each hand at your sides.",
+      "With a slight bend in your elbows, raise your arms out to the sides.",
+      "Lift until your arms are roughly parallel with the floor.",
+      "Lower back down slowly and repeat without swinging."
+    ]
+  },
+  {
+    "id": "russian-twist",
+    "name": "RUSSIAN TWIST",
+    "tags": ["CORE"],
+    "equipment": "Medicine Ball",
+    "difficulty": "Beginner",
+    "sets": 3,
+    "reps": "20 twists",
+    "duration": 12,
+    "calories": 95,
+    "rating": 4.3,
+    "description": "A rotational core movement that builds obliques and total midsection stability.",
+    "instructions": [
+      "Sit on the floor with knees bent and lean back to a 45-degree angle.",
+      "Hold a medicine ball with both hands in front of your chest.",
+      "Rotate your torso to tap the ball on the floor beside your hip.",
+      "Rotate to the opposite side and repeat, keeping your core braced."
+    ]
+  },
+  {
+    "id": "plank",
+    "name": "PLANK",
+    "tags": ["CORE"],
+    "equipment": "Bodyweight",
+    "difficulty": "Beginner",
+    "sets": 3,
+    "reps": "45 sec",
+    "duration": 10,
+    "calories": 70,
+    "rating": 4.4,
+    "description": "A foundational isometric hold that builds core stability and total-body tension.",
+    "instructions": [
+      "Set up on your forearms and toes, elbows stacked under your shoulders.",
+      "Brace your core and squeeze your glutes to keep your hips level.",
+      "Keep a straight line from head to heels without sagging or piking.",
+      "Hold the position for the full duration, breathing steadily throughout."
+    ]
+  }
+]

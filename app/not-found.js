@@ -2,18 +2,18 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-black px-4 text-center">
-      <p className="font-display text-7xl font-bold text-accent">404</p>
-      <h1 className="font-display text-2xl font-bold uppercase tracking-wide">
-        Lift Not Found
+    <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-32 text-center sm:px-6 lg:px-8">
+      <span className="font-display text-7xl font-bold text-accent">404</span>
+      <h1 className="font-display text-2xl font-bold uppercase text-white sm:text-3xl">
+        This set doesn&rsquo;t exist
       </h1>
-      <p className="max-w-sm text-neutral-500">
-        This page doesn&apos;t exist, or the workout you&apos;re looking for
-        isn&apos;t in the library.
+      <p className="max-w-sm text-sm text-muted">
+        The page you&rsquo;re looking for got racked somewhere else. Head back
+        to the library and pick a lift.
       </p>
-      <Link href="/" className="btn-primary mt-4">
-        Back to Library
+      <Link href="/" className="btn-primary">
+        Back to workouts
       </Link>
-    </main>
+    </section>
   );
 }

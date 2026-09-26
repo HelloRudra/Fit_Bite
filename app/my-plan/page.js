@@ -1,195 +1,231 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { usePlan } from "@/context/PlanContext";
-import {
-  IconClock,
-  IconFlame,
-  IconStar,
-  IconCheck,
-  IconX,
-} from "@/components/icons";
+import Image from "next/image";
+import { usePlan } from "../../context/PlanContext";
+import { tagStyle } from "../../lib/categoryStyles";
+import { IconClock, IconFlame, IconStar, IconCheck, IconX, IconChevronDown } from "../../components/Icons";
+
+const SORT_OPTIONS = [
+  { value: "duration", label: "Duration" },
+  { value: "calories", label: "Calories" },
+  { value: "rating", label: "Rating" },
+];
 
 export default function MyPlanPage() {
-  const { plan, saved, hydrated, removeFromPlan, removeFromSaved, toggleDone, addToast } =
-    usePlan();
+  const { plan, saved, removeFromPlan, removeFromSaved, markDone } = usePlan();
   const [tab, setTab] = useState("plan");
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState({ plan: "duration", saved: "duration" });
+  const [sortOpen, setSortOpen] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 450);
+    return () => clearTimeout(t);
+  }, []);
+
+  const currentSort = sortBy[tab];
+
+  const list = useMemo(() => {
+    const base = tab === "plan" ? plan : saved;
+    return [...base].sort((a, b) => (b[currentSort] ?? 0) - (a[currentSort] ?? 0));
+  }, [tab, plan, saved, currentSort]);
 
   const metrics = useMemo(() => {
-    const exercises = plan.length;
-    const minutes = plan.reduce((sum, w) => sum + (w.duration || 0), 0);
-    const calories = plan.reduce((sum, w) => sum + (w.caloriesBurned || 0), 0);
-    return { exercises, minutes, calories };
+    return plan.reduce(
+      (acc, w) => ({
+        exercises: acc.exercises + 1,
+        minutes: acc.minutes + w.duration,
+        calories: acc.calories + w.calories,
+      }),
+      { exercises: 0, minutes: 0, calories: 0 }
+    );
   }, [plan]);
 
-  const list = tab === "plan" ? plan : saved;
-
-  function handleRemove(id) {
-    if (tab === "plan") {
-      removeFromPlan(id);
-    } else {
-      removeFromSaved(id);
-    }
-    addToast("Removed from " + (tab === "plan" ? "today's plan" : "saved"));
-  }
-
-  function handleDone(id) {
-    toggleDone(id);
-    addToast("Marked as done");
-  }
-
   return (
-    <>
-      <Navbar />
-      <main className="container-page py-12">
-        <h1 className="font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
-          My Plan
-        </h1>
-        <p className="mt-2 text-neutral-400">
-          Cap of five lifts for today. Finish them, then load more.
-        </p>
+    <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <h1 className="font-display text-3xl font-bold uppercase text-white sm:text-4xl">
+        My Plan
+      </h1>
+      <p className="mt-2 text-sm text-muted">
+        Cap of five lifts for today. Finish them, then load more.
+      </p>
 
-        <div className="mt-8 grid grid-cols-3 gap-4">
-          <StatCard label="Exercises" value={metrics.exercises} />
-          <StatCard label="Minutes" value={metrics.minutes} />
-          <StatCard label="Calories" value={metrics.calories} />
+      <div className="mt-8 grid grid-cols-3 gap-4">
+        <StatCard label="Exercises" value={metrics.exercises} />
+        <StatCard label="Minutes" value={metrics.minutes} />
+        <StatCard label="Calories" value={metrics.calories} />
+      </div>
+
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-b border-line">
+        <div className="flex gap-2">
+          {[
+            { key: "plan", label: "Today's Plan" },
+            { key: "saved", label: "Saved" },
+          ].map((t) => (
+            <button
+              key={t.key}
+              onClick={() => {
+                setTab(t.key);
+                setSortOpen(false);
+              }}
+              className={`px-4 py-3 text-sm font-semibold uppercase tracking-wide transition ${
+                tab === t.key
+                  ? "border-b-2 border-accent text-accent"
+                  : "text-muted hover:text-white"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
 
-        <div className="mt-10 flex gap-2 border-b border-line">
-          <TabButton active={tab === "plan"} onClick={() => setTab("plan")}>
-            Today&apos;s Plan
-          </TabButton>
-          <TabButton active={tab === "saved"} onClick={() => setTab("saved")}>
-            Saved
-          </TabButton>
-        </div>
+        {list.length > 0 && (
+          <div className="relative mb-3">
+            <button
+              onClick={() => setSortOpen((o) => !o)}
+              className="flex items-center gap-2 rounded-full border border-line bg-panel px-4 py-2 text-sm font-semibold text-white"
+            >
+              Sort By:{" "}
+              <span className="text-accent">
+                {SORT_OPTIONS.find((o) => o.value === currentSort)?.label}
+              </span>
+              <IconChevronDown />
+            </button>
+            {sortOpen && (
+              <div className="absolute right-0 z-20 mt-2 w-40 overflow-hidden rounded-xl border border-line bg-panel2 shadow-xl">
+                {SORT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => {
+                      setSortBy((prev) => ({ ...prev, [tab]: opt.value }));
+                      setSortOpen(false);
+                    }}
+                    className={`block w-full px-4 py-2.5 text-left text-sm hover:bg-white/5 ${
+                      currentSort === opt.value ? "text-accent" : "text-white"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
-        <div className="mt-6">
-          {!hydrated ? (
-            <div className="flex flex-col items-center justify-center gap-4 py-24 text-neutral-400">
-              <div className="h-10 w-10 animate-spin-slow rounded-full border-2 border-line border-t-accent" />
-              <p>Loading workouts…</p>
-            </div>
-          ) : list.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <div className="flex flex-col gap-4">
-              {list.map((w) => (
-                <PlanCard
-                  key={w.id}
-                  workout={w}
-                  showDone={tab === "plan"}
-                  onRemove={() => handleRemove(w.id)}
-                  onDone={() => handleDone(w.id)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </main>
-      <Footer />
-    </>
+      <div className="mt-6">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center gap-4 py-20 text-muted">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-line border-t-accent" />
+            <p className="text-sm">Loading workouts…</p>
+          </div>
+        ) : list.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="flex flex-col gap-4">
+            {list.map((w) => (
+              <PlanCard
+                key={w.id}
+                workout={w}
+                tab={tab}
+                onRemove={() => (tab === "plan" ? removeFromPlan(w.id) : removeFromSaved(w.id))}
+                onMarkDone={() => markDone(w.id)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
 function StatCard({ label, value }) {
   return (
     <div className="card-surface flex flex-col items-center justify-center gap-1 py-6">
-      <span className="font-display text-3xl font-bold text-accent">
-        {value}
-      </span>
-      <span className="text-xs uppercase tracking-wide text-neutral-500">
-        {label}
-      </span>
+      <span className="font-display text-3xl font-bold text-accent">{value}</span>
+      <span className="text-xs uppercase tracking-wide text-muted">{label}</span>
     </div>
-  );
-}
-
-function TabButton({ active, onClick, children }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold uppercase tracking-wide transition ${
-        active
-          ? "border-accent text-accent"
-          : "border-transparent text-neutral-500 hover:text-neutral-200"
-      }`}
-    >
-      {children}
-    </button>
   );
 }
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-line py-24 text-center">
-      <h3 className="font-display text-xl font-bold uppercase tracking-wide">
-        Nothing Here Yet
+    <div className="card-surface flex flex-col items-center gap-4 py-20 text-center">
+      <h3 className="font-display text-xl font-bold uppercase text-white">
+        Nothing here yet
       </h3>
-      <p className="max-w-sm text-sm text-neutral-500">
+      <p className="max-w-sm text-sm text-muted">
         Browse the library and add a lift to get today moving.
       </p>
-      <Link href="/" className="btn-primary mt-4">
+      <Link href="/" className="btn-primary">
         Go to workouts
       </Link>
     </div>
   );
 }
 
-function PlanCard({ workout, showDone, onRemove, onDone }) {
+function PlanCard({ workout, tab, onRemove, onMarkDone }) {
   return (
-    <div
-      className={`card-surface flex flex-col items-start gap-4 p-4 sm:flex-row sm:items-center ${
-        workout.done ? "opacity-50" : ""
-      }`}
-    >
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-surface2">
-        <Image src={workout.image} alt={workout.name} fill className="object-cover" />
+    <div className="card-surface flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
+      <div className="relative h-20 w-full shrink-0 overflow-hidden rounded-xl bg-panel2 sm:w-28">
+        <Image src="/banner.png" alt={workout.name} fill className="object-cover" />
       </div>
+
       <div className="flex-1">
-        <h3 className="font-display text-base font-bold uppercase leading-tight">
+        <div className="mb-1 flex flex-wrap gap-2">
+          {workout.tags?.map((tag) => (
+            <span key={tag} className={`pill ${tagStyle(tag)}`}>
+              {tag}
+            </span>
+          ))}
+        </div>
+        <h3
+          className={`font-display text-base font-bold text-white ${
+            workout.done ? "line-through opacity-50" : ""
+          }`}
+        >
           {workout.name}
-          {workout.done && (
-            <span className="ml-2 text-xs font-semibold text-accent">DONE</span>
-          )}
         </h3>
-        <p className="text-xs text-neutral-500">{workout.equipment}</p>
-        <div className="mt-2 flex items-center gap-4 text-neutral-300">
-          <span className="stat-icon">
-            <IconClock /> {workout.duration} min
+        <p className="text-xs text-muted">{workout.equipment}</p>
+        <div className="mt-2 flex items-center gap-4 text-xs text-muted">
+          <span className="flex items-center gap-1">
+            <IconClock className="text-accent" /> {workout.duration} min
           </span>
-          <span className="stat-icon">
-            <IconFlame /> {workout.caloriesBurned} kcal
+          <span className="flex items-center gap-1">
+            <IconFlame className="text-accent" /> {workout.calories} kcal
           </span>
-          <span className="stat-icon text-accent">
-            <IconStar /> {workout.rating}
+          <span className="flex items-center gap-1">
+            <IconStar className="text-accent" /> {workout.rating}
           </span>
         </div>
       </div>
-      <div className="flex w-full items-center gap-2 sm:w-auto">
+
+      <div className="flex shrink-0 items-center gap-3">
         <Link
           href={`/workout/${workout.id}`}
-          className="flex-1 rounded-full border border-line px-4 py-2 text-center text-xs font-semibold uppercase text-neutral-200 hover:border-accent hover:text-accent sm:flex-none"
+          className="rounded-full border border-line px-4 py-2 text-xs font-semibold text-white transition hover:border-accent hover:text-accent"
         >
           View Details
         </Link>
-        {showDone && (
+        {tab === "plan" && (
           <button
-            onClick={onDone}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-neutral-300 hover:border-accent hover:text-accent"
-            title="Mark as done"
+            onClick={onMarkDone}
+            className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition ${
+              workout.done
+                ? "border border-line text-muted hover:text-white"
+                : "bg-accent text-ink hover:brightness-95"
+            }`}
           >
-            <IconCheck />
+            <IconCheck /> {workout.done ? "Done" : "Mark as Done"}
           </button>
         )}
         <button
           onClick={onRemove}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-neutral-300 hover:border-red-500 hover:text-red-400"
           title="Remove"
+          aria-label="Remove"
+          className="flex h-8 w-8 items-center justify-center rounded-full text-muted transition hover:text-red-400"
         >
           <IconX />
         </button>

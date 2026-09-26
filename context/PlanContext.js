@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 
 const PlanContext = createContext(null);
 
@@ -8,135 +8,124 @@ const PLAN_KEY = "fitlog_plan_v1";
 const SAVED_KEY = "fitlog_saved_v1";
 const PLAN_CAP = 5;
 
+function readStorage(key) {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
 export function PlanProvider({ children }) {
   const [plan, setPlan] = useState([]);
   const [saved, setSaved] = useState([]);
   const [toasts, setToasts] = useState([]);
   const [hydrated, setHydrated] = useState(false);
 
-  // Load from localStorage on mount
   useEffect(() => {
-    try {
-      const storedPlan = JSON.parse(localStorage.getItem(PLAN_KEY) || "[]");
-      const storedSaved = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
-      setPlan(Array.isArray(storedPlan) ? storedPlan : []);
-      setSaved(Array.isArray(storedSaved) ? storedSaved : []);
-    } catch (e) {
-      // ignore corrupt storage
-    }
+    setPlan(readStorage(PLAN_KEY));
+    setSaved(readStorage(SAVED_KEY));
     setHydrated(true);
   }, []);
 
-  // Persist plan
   useEffect(() => {
     if (!hydrated) return;
-    try {
-      localStorage.setItem(PLAN_KEY, JSON.stringify(plan));
-    } catch (e) {}
+    window.localStorage.setItem(PLAN_KEY, JSON.stringify(plan));
   }, [plan, hydrated]);
 
-  // Persist saved
   useEffect(() => {
     if (!hydrated) return;
-    try {
-      localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
-    } catch (e) {}
+    window.localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
   }, [saved, hydrated]);
 
-  function addToast(message, type = "success") {
-    const id = Date.now() + Math.random();
-    setToasts((t) => [...t, { id, message, type }]);
+  const pushToast = useCallback((message) => {
+    const id = Math.random().toString(36).slice(2);
+    setToasts((t) => [...t, { id, message }]);
     setTimeout(() => {
-      setToasts((t) => t.filter((x) => x.id !== id));
-    }, 2600);
-  }
+      setToasts((t) => t.filter((toast) => toast.id !== id));
+    }, 2800);
+  }, []);
 
-  function addToPlan(workout) {
-    let result = { ok: false, reason: "" };
-    setPlan((prev) => {
-      if (prev.some((w) => w.id === workout.id)) {
-        result = { ok: false, reason: "duplicate" };
-        return prev;
+  const isPlanFull = plan.length >= PLAN_CAP;
+
+  // NOTE: side effects (pushToast) are intentionally kept OUT of the setState
+  // updater callbacks below. React 18 Strict Mode invokes updater functions
+  // twice in development to surface impure updaters, which was previously
+  // causing every toast to render twice. The outcome is now decided first
+  // from the current state, then applied with a single setState + a single
+  // pushToast call.
+  const addToPlan = useCallback(
+    (workout) => {
+      if (plan.some((w) => w.id === workout.id)) {
+        pushToast("Already in today's plan");
+        return;
       }
-      if (prev.length >= PLAN_CAP) {
-        result = { ok: false, reason: "cap" };
-        return prev;
+      if (plan.length >= PLAN_CAP) {
+        pushToast("Today's plan is full (5 lifts max)");
+        return;
       }
-      result = { ok: true };
-      return [...prev, { ...workout, done: false }];
-    });
-    return result;
-  }
+      setPlan([...plan, { ...workout, done: false }]);
+      pushToast("Added to today's plan");
+    },
+    [plan, pushToast]
+  );
 
-  function addToSaved(workout) {
-    let result = { ok: false, reason: "" };
-    setSaved((prev) => {
-      if (prev.some((w) => w.id === workout.id)) {
-        result = { ok: false, reason: "duplicate" };
-        return prev;
+  const addToSaved = useCallback(
+    (workout) => {
+      if (saved.some((w) => w.id === workout.id)) {
+        pushToast("Already saved");
+        return;
       }
-      result = { ok: true };
-      return [...prev, workout];
-    });
-    return result;
-  }
+      setSaved([...saved, workout]);
+      pushToast("Saved for later");
+    },
+    [saved, pushToast]
+  );
 
-  function removeFromPlan(id) {
-    setPlan((prev) => prev.filter((w) => w.id !== id));
-  }
+  const removeFromPlan = useCallback(
+    (id) => {
+      setPlan(plan.filter((w) => w.id !== id));
+      pushToast("Removed from plan");
+    },
+    [plan, pushToast]
+  );
 
-  function removeFromSaved(id) {
-    setSaved((prev) => prev.filter((w) => w.id !== id));
-  }
+  const removeFromSaved = useCallback(
+    (id) => {
+      setSaved(saved.filter((w) => w.id !== id));
+      pushToast("Removed from saved");
+    },
+    [saved, pushToast]
+  );
 
-  function toggleDone(id) {
-    setPlan((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, done: !w.done } : w))
-    );
-  }
+  const markDone = useCallback(
+    (id) => {
+      const target = plan.find((w) => w.id === id);
+      setPlan(plan.map((w) => (w.id === id ? { ...w, done: !w.done } : w)));
+      pushToast(target && !target.done ? "Marked as done" : "Marked as not done");
+    },
+    [plan, pushToast]
+  );
 
   const value = useMemo(
     () => ({
       plan,
       saved,
-      hydrated,
-      planCap: PLAN_CAP,
+      toasts,
+      isPlanFull,
       addToPlan,
       addToSaved,
       removeFromPlan,
       removeFromSaved,
-      toggleDone,
-      toasts,
-      addToast,
+      markDone,
+      pushToast,
     }),
-    [plan, saved, hydrated, toasts]
+    [plan, saved, toasts, isPlanFull, addToPlan, addToSaved, removeFromPlan, removeFromSaved, markDone, pushToast]
   );
 
-  return (
-    <PlanContext.Provider value={value}>
-      {children}
-      <ToastViewport toasts={toasts} />
-    </PlanContext.Provider>
-  );
-}
-
-function ToastViewport({ toasts }) {
-  return (
-    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 items-end pointer-events-none">
-      {toasts.map((t) => (
-        <div
-          key={t.id}
-          className={`toast-anim pointer-events-auto rounded-lg border px-4 py-3 text-sm font-medium shadow-lg backdrop-blur ${
-            t.type === "error"
-              ? "border-red-500/40 bg-red-950/80 text-red-200"
-              : "border-accent/40 bg-neutral-900/90 text-accent"
-          }`}
-        >
-          {t.message}
-        </div>
-      ))}
-    </div>
-  );
+  return <PlanContext.Provider value={value}>{children}</PlanContext.Provider>;
 }
 
 export function usePlan() {

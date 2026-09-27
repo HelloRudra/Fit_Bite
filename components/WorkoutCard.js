@@ -5,7 +5,10 @@ import { tagStyle } from "@/lib/categoryStyles";
 
 export default function WorkoutCard({ workout }) {
   return (
-    
+    <Link
+      href={`/workout/${workout.id}`}
+      className="card-surface group flex flex-col overflow-hidden transition hover:border-accent/60 hover:-translate-y-1"
+    >
       <div className="relative h-44 w-full overflow-hidden bg-panel2">
         {workout.image ? (
           <Image

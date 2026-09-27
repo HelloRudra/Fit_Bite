@@ -49,35 +49,3 @@ notification.
    page reload. A custom 404 page handles unknown routes and unknown
    workout ids.
 
-## Getting Started
-
-```bash
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view the app.
-
-## Data Source
-
-This app fetches workout data from the FitLog API:
-
-- All workouts: `https://api.abcz.workers.dev/api/fitlog`
-- Single workout: `https://api.abcz.workers.dev/api/fitlog/:id`
-
-See `lib/api.js` for the fetch implementation.
-
-## Project Structure
-
-```
-app/
-  page.js                 Home page (hero + library)
-  workout/[id]/page.js    Workout detail page (client-fetched by id)
-  my-plan/page.js         Today's Plan / Saved page
-  not-found.js            Custom 404 page
-  loading.js              Route-level loading fallback
-components/               Navbar, Footer, Hero, cards, icons, toasts
-context/PlanContext.js    Plan/Saved/toast state + localStorage sync
-lib/api.js                FitLog API client
-lib/categoryStyles.js     Muscle-group tag color mapping
-```

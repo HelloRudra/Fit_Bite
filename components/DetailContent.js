@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { usePlan } from "../context/PlanContext";
-import { tagStyle } from "../lib/categoryStyles";
+import { usePlan } from "@/context/PlanContext";
+import { tagStyle } from "@/lib/categoryStyles";
 import { IconPlus, IconBookmark } from "./Icons";
 
 export default function DetailContent({ workout }) {
@@ -14,22 +14,34 @@ export default function DetailContent({ workout }) {
     ["SETS", workout.sets],
     ["REPS", workout.reps],
     ["DURATION", `${workout.duration} min`],
-    ["CALORIES", `${workout.calories} kcal`],
+    ["CALORIES", `${workout.caloriesBurned} kcal`],
     ["RATING", workout.rating],
   ];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <section className="container-page py-12">
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
         <div className="relative h-72 w-full overflow-hidden rounded-2xl border border-line bg-panel sm:h-96 lg:h-full lg:min-h-[520px]">
-          <Image src="/banner.png" alt={workout.name} fill className="object-contain p-6" />
+          {workout.image ? (
+            <Image
+              src={workout.image}
+              alt={workout.name}
+              fill
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-muted">
+              No image
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap gap-2">
-            {workout.tags.map((tag) => (
+            {workout.muscleGroups?.map((tag) => (
               <span key={tag} className={`pill ${tagStyle(tag)}`}>
-                {tag}
+                {tag.toUpperCase()}
               </span>
             ))}
           </div>
@@ -57,9 +69,9 @@ export default function DetailContent({ workout }) {
               Instructions
             </h2>
             <ol className="flex flex-col gap-3">
-              {workout.instructions.map((step, i) => (
+              {workout.instructions?.map((step, i) => (
                 <li key={i} className="flex gap-3 text-sm text-white/90">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-ink">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-black">
                     {i + 1}
                   </span>
                   <span className="pt-0.5 leading-relaxed">{step}</span>
@@ -76,10 +88,16 @@ export default function DetailContent({ workout }) {
             >
               <IconPlus /> Add to today&rsquo;s plan
             </button>
-            <button onClick={() => addToSaved(workout)} className="btn-secondary">
+            <button onClick={() => addToSaved(workout)} className="btn-outline">
               <IconBookmark /> Save for later
             </button>
           </div>
+          {isPlanFull && (
+            <p className="text-xs text-red-400">
+              Today&rsquo;s plan is full — remove a lift on the My Plan page
+              to add another.
+            </p>
+          )}
         </div>
       </div>
     </section>

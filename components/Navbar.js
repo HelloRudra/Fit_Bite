@@ -3,42 +3,56 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { usePlan } from "../context/PlanContext";
+import { usePlan } from "@/context/PlanContext";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { plan, saved } = usePlan();
 
-  const linkClass = (href) =>
-    `text-sm font-semibold uppercase tracking-wide transition ${
-      pathname === href ? "text-accent" : "text-white/80 hover:text-white"
-    }`;
+  const isWorkouts = pathname === "/";
+  const isMyPlan = pathname === "/my-plan";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-ink/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+    <header className="border-b border-white/5 bg-ink">
+      <div className="container-page flex flex-wrap items-center justify-between gap-3 py-4">
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="FitLog logo" width={28} height={28} />
-          <span className="font-display text-xl font-bold tracking-wide text-white">
-            FIT<span className="text-accent">LOG</span>
+          <Image src="/logo.png" alt="FitLog logo" width={24} height={24} />
+          <span className="font-display text-lg font-bold tracking-wide text-white">
+            FITLOG
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          <Link href="/#library" className={linkClass("/")}>
-            Workout
+        <nav className="order-3 flex w-full items-center justify-center gap-1 sm:order-none sm:w-auto">
+          <Link
+            href="/"
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+              isWorkouts ? "bg-accent/15 text-accent" : "text-muted hover:text-white"
+            }`}
+          >
+            Workouts
           </Link>
-          <Link href="/my-plan" className={linkClass("/my-plan")}>
+          <Link
+            href="/my-plan"
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+              isMyPlan ? "bg-accent/15 text-accent" : "text-muted hover:text-white"
+            }`}
+          >
             My Plan
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
-          <Link href="/my-plan" className="pill bg-accent text-ink">
-            Plan&nbsp;{plan.length}
+        <div className="flex items-center gap-3 text-sm sm:gap-4">
+          <Link href="/my-plan" className="flex items-center gap-2">
+            <span className="hidden text-white sm:inline">Plan</span>
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-xs font-bold text-black">
+              {plan.length}
+            </span>
           </Link>
-          <Link href="/my-plan" className="pill border border-line text-white">
-            Saved&nbsp;{saved.length}
+          <Link href="/my-plan" className="flex items-center gap-2">
+            <span className="hidden text-muted sm:inline">Saved</span>
+            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-line text-xs font-bold text-muted">
+              {saved.length}
+            </span>
           </Link>
         </div>
       </div>

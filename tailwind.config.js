@@ -9,15 +9,19 @@ module.exports = {
     extend: {
       colors: {
         accent: "#ccff00",
-        ink: "#0d0d0d",
-        panel: "#171717",
-        panel2: "#1f1f1f",
-        line: "#2b2b2b",
-        muted: "#9a9a9a",
+        ink: "#0d0d0f",
+        page: "#000000",
+        panel: "#121214",
+        panel2: "#1b1b1e",
+        line: "#2a2a2d",
+        muted: "#9a9aa0",
       },
       fontFamily: {
         display: ["Oswald", "sans-serif"],
         body: ["Inter", "sans-serif"],
+      },
+      borderRadius: {
+        "4xl": "2rem",
       },
     },
   },

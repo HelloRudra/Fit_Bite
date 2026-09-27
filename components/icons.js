@@ -1,6 +1,6 @@
 export function IconClock(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" width="16" height="16" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" width="15" height="15" {...props}>
       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
       <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
@@ -9,7 +9,7 @@ export function IconClock(props) {
 
 export function IconFlame(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" width="16" height="16" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" width="15" height="15" {...props}>
       <path
         d="M12 2c1 3-2 4-2 7a4 4 0 108 0c0-1-1-2-1-2 1 4-1 5-2 5-1.5 0-2-1.5-1-3-2 1-3 3-3 5a5 5 0 1010 0c0-5-4-6-4-10-1 1-1.5 2-1.5 3-1-1-1.5-3-1.5-5z"
         fill="currentColor"
@@ -20,7 +20,7 @@ export function IconFlame(props) {
 
 export function IconStar(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" {...props}>
+    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15" {...props}>
       <path d="M12 2.5l2.9 6.1 6.6.7-4.9 4.6 1.3 6.6L12 17.6l-5.9 3.1 1.3-6.6-4.9-4.6 6.6-.7L12 2.5z" />
     </svg>
   );
@@ -28,7 +28,7 @@ export function IconStar(props) {
 
 export function IconArrowRight(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" width="18" height="18" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" width="16" height="16" {...props}>
       <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -52,8 +52,8 @@ export function IconBookmark(props) {
 
 export function IconCheck(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" width="16" height="16" {...props}>
-      <path d="M5 13l4 4 10-10" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 24 24" fill="none" width="14" height="14" {...props}>
+      <path d="M5 13l4 4 10-10" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -85,7 +85,7 @@ export function IconSearch(props) {
 
 export function IconDumbbell(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" width="40" height="40" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" width="22" height="22" {...props}>
       <path
         d="M4 10v4M2 9v6M20 10v4M22 9v6M6 12h12"
         stroke="currentColor"

@@ -1,18 +1,26 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 const PlanContext = createContext(null);
 
 const PLAN_KEY = "fitlog_plan_v1";
 const SAVED_KEY = "fitlog_saved_v1";
-const PLAN_CAP = 5;
+export const PLAN_CAP = 5;
 
 function readStorage(key) {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : [];
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
@@ -24,6 +32,7 @@ export function PlanProvider({ children }) {
   const [toasts, setToasts] = useState([]);
   const [hydrated, setHydrated] = useState(false);
 
+  // Load persisted state once on mount.
   useEffect(() => {
     setPlan(readStorage(PLAN_KEY));
     setSaved(readStorage(SAVED_KEY));
@@ -40,9 +49,9 @@ export function PlanProvider({ children }) {
     window.localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
   }, [saved, hydrated]);
 
-  const pushToast = useCallback((message) => {
-    const id = Math.random().toString(36).slice(2);
-    setToasts((t) => [...t, { id, message }]);
+  const pushToast = useCallback((message, tone = "default") => {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    setToasts((t) => [...t, { id, message, tone }]);
     setTimeout(() => {
       setToasts((t) => t.filter((toast) => toast.id !== id));
     }, 2800);
@@ -50,24 +59,23 @@ export function PlanProvider({ children }) {
 
   const isPlanFull = plan.length >= PLAN_CAP;
 
-  // NOTE: side effects (pushToast) are intentionally kept OUT of the setState
-  // updater callbacks below. React 18 Strict Mode invokes updater functions
-  // twice in development to surface impure updaters, which was previously
-  // causing every toast to render twice. The outcome is now decided first
-  // from the current state, then applied with a single setState + a single
-  // pushToast call.
+  // Every action below decides its outcome from the CURRENT state first,
+  // then performs exactly one setState + one pushToast call. Side effects
+  // are intentionally kept out of setState updater functions — React 18
+  // Strict Mode invokes updater callbacks twice in development, and a
+  // pushToast call living inside an updater would fire twice per click.
   const addToPlan = useCallback(
     (workout) => {
       if (plan.some((w) => w.id === workout.id)) {
-        pushToast("Already in today's plan");
+        pushToast("Already in today's plan", "error");
         return;
       }
       if (plan.length >= PLAN_CAP) {
-        pushToast("Today's plan is full (5 lifts max)");
+        pushToast(`Plan is full — max ${PLAN_CAP} lifts`, "error");
         return;
       }
       setPlan([...plan, { ...workout, done: false }]);
-      pushToast("Added to today's plan");
+      pushToast("Added to today's plan", "success");
     },
     [plan, pushToast]
   );
@@ -75,11 +83,11 @@ export function PlanProvider({ children }) {
   const addToSaved = useCallback(
     (workout) => {
       if (saved.some((w) => w.id === workout.id)) {
-        pushToast("Already saved");
+        pushToast("Already saved", "error");
         return;
       }
       setSaved([...saved, workout]);
-      pushToast("Saved for later");
+      pushToast("Saved for later", "success");
     },
     [saved, pushToast]
   );
@@ -87,7 +95,7 @@ export function PlanProvider({ children }) {
   const removeFromPlan = useCallback(
     (id) => {
       setPlan(plan.filter((w) => w.id !== id));
-      pushToast("Removed from plan");
+      pushToast("Removed from today's plan", "default");
     },
     [plan, pushToast]
   );
@@ -95,7 +103,7 @@ export function PlanProvider({ children }) {
   const removeFromSaved = useCallback(
     (id) => {
       setSaved(saved.filter((w) => w.id !== id));
-      pushToast("Removed from saved");
+      pushToast("Removed from saved", "default");
     },
     [saved, pushToast]
   );
@@ -104,7 +112,7 @@ export function PlanProvider({ children }) {
     (id) => {
       const target = plan.find((w) => w.id === id);
       setPlan(plan.map((w) => (w.id === id ? { ...w, done: !w.done } : w)));
-      pushToast(target && !target.done ? "Marked as done" : "Marked as not done");
+      pushToast(target && !target.done ? "Marked as done" : "Marked as not done", "success");
     },
     [plan, pushToast]
   );
@@ -114,7 +122,9 @@ export function PlanProvider({ children }) {
       plan,
       saved,
       toasts,
+      hydrated,
       isPlanFull,
+      planCap: PLAN_CAP,
       addToPlan,
       addToSaved,
       removeFromPlan,
@@ -122,7 +132,7 @@ export function PlanProvider({ children }) {
       markDone,
       pushToast,
     }),
-    [plan, saved, toasts, isPlanFull, addToPlan, addToSaved, removeFromPlan, removeFromSaved, markDone, pushToast]
+    [plan, saved, toasts, hydrated, isPlanFull, addToPlan, addToSaved, removeFromPlan, removeFromSaved, markDone, pushToast]
   );
 
   return <PlanContext.Provider value={value}>{children}</PlanContext.Provider>;

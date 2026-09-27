@@ -2,32 +2,27 @@
 
 import { useEffect, useMemo, useState } from "react";
 import WorkoutCard from "./WorkoutCard";
-import { IconChevronDown, IconSearch } from "./Icons";
-
-const SORT_OPTIONS = [
-  { value: "duration", label: "Duration" },
-  { value: "calories", label: "Calories" },
-  { value: "rating", label: "Rating" },
-];
+import SortDropdown from "./SortDropdown";
+import { IconSearch } from "./Icons";
+import { getWorkouts } from "@/lib/api";
 
 export default function LibrarySection() {
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [sortBy, setSortBy] = useState("duration");
   const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
-    fetch("/api/workouts")
-      .then((res) => res.json())
+    setLoading(true);
+    setError(false);
+    getWorkouts()
       .then((data) => {
-        if (active) {
-          setWorkouts(data);
-          setLoading(false);
-        }
+        if (active) setWorkouts(Array.isArray(data) ? data : []);
       })
-      .catch(() => setLoading(false));
+      .catch(() => active && setError(true))
+      .finally(() => active && setLoading(false));
     return () => {
       active = false;
     };
@@ -39,17 +34,17 @@ export default function LibrarySection() {
     if (q) {
       list = list.filter(
         (w) =>
-          w.name.toLowerCase().includes(q) ||
-          w.tags.some((t) => t.toLowerCase().includes(q))
+          w.name?.toLowerCase().includes(q) ||
+          w.muscleGroups?.some((t) => t.toLowerCase().includes(q))
       );
     }
-    list.sort((a, b) => b[sortBy] - a[sortBy]);
+    list.sort((a, b) => (b[sortBy] ?? 0) - (a[sortBy] ?? 0));
     return list;
   }, [workouts, sortBy, query]);
 
   return (
-    <section id="library" className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+    <section id="library" className="container-page scroll-mt-6 py-14 sm:py-16">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="font-display text-3xl font-bold uppercase text-white sm:text-4xl">
             The Library
@@ -60,51 +55,28 @@ export default function LibrarySection() {
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="flex items-center gap-2 rounded-full border border-line bg-panel px-4 py-2.5">
+          <div className="flex items-center gap-2 rounded-full border border-line bg-panel2 px-4 py-2">
             <IconSearch className="text-muted" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search workouts or tags"
+              placeholder="Search by name or tag"
               className="w-40 bg-transparent text-sm text-white placeholder:text-muted focus:outline-none sm:w-56"
             />
           </div>
-
-          <div className="relative">
-            <button
-              onClick={() => setOpen((o) => !o)}
-              className="flex items-center gap-2 rounded-full border border-line bg-panel px-4 py-2.5 text-sm font-semibold text-white"
-            >
-              Sort By: <span className="text-accent">{SORT_OPTIONS.find((o) => o.value === sortBy)?.label}</span>
-              <IconChevronDown />
-            </button>
-            {open && (
-              <div className="absolute right-0 z-20 mt-2 w-40 overflow-hidden rounded-xl border border-line bg-panel2 shadow-xl">
-                {SORT_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => {
-                      setSortBy(opt.value);
-                      setOpen(false);
-                    }}
-                    className={`block w-full px-4 py-2.5 text-left text-sm hover:bg-white/5 ${
-                      sortBy === opt.value ? "text-accent" : "text-white"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <SortDropdown value={sortBy} onChange={setSortBy} />
         </div>
       </div>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center gap-4 py-24 text-muted">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-line border-t-accent" />
+          <div className="h-10 w-10 spin-slow rounded-full border-2 border-line border-t-accent" />
           <p className="text-sm">Loading workouts…</p>
         </div>
+      ) : error ? (
+        <p className="py-16 text-center text-sm text-red-400">
+          Couldn&rsquo;t load workouts. Please try again later.
+        </p>
       ) : visible.length === 0 ? (
         <p className="py-16 text-center text-sm text-muted">
           No workouts match your search.

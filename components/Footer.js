@@ -11,7 +11,7 @@ export default function Footer() {
           </span>
         </div>
         <p className="text-xs text-muted">
-          © 2026 FitLog — Workout Library. Train hard, log honest.
+          © 2026 FitLog By Rudra — Workout Library. Train hard, log honest.
         </p>
       </div>
     </footer>
